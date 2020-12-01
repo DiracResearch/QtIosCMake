@@ -65,6 +65,7 @@ include(CMakeParseArguments)
 #    IPA
 #    UPLOAD_SYMBOL
 #    DISTRIBUTION_METHOD "app-store"
+#    PHOTO_LIBRARY_USAGE_DES "We need to store this item."
 #    VERBOSE
 # )
 function(add_qt_ios_app TARGET)
@@ -99,6 +100,7 @@ function(add_qt_ios_app TARGET)
         CATALOG_APPICON
         CATALOG_LAUNCHIMAGE
         DISTRIBUTION_METHOD
+        PHOTO_LIBRARY_USAGE_DES
         )
     set(QT_IOS_MULTI_VALUE_ARG
         RESOURCE_FILES
@@ -144,6 +146,7 @@ function(add_qt_ios_app TARGET)
     set(QT_IOS_SUPPORT_IPAD ${ARGIOS_SUPPORT_IPAD})
     set(QT_IOS_REQUIRES_FULL_SCREEN ${ARGIOS_REQUIRES_FULL_SCREEN})
     set(QT_IOS_HIDDEN_STATUS_BAR ${ARGIOS_HIDDEN_STATUS_BAR})
+    set(QT_IOS_PHOTO_LIBRARY_USAGE_DES ${ARGIOS_PHOTO_LIBRARY_USAGE_DES})
 
     set(QT_IOS_IPA ${ARGIOS_IPA})
     set(QT_IOS_UPLOAD_SYMBOL ${ARGIOS_UPLOAD_SYMBOL})
@@ -155,7 +158,7 @@ function(add_qt_ios_app TARGET)
     endif()
 
     # Allow user to override QT_IOS_ITS_ENCRYPTION_EXPORT_COMPLIANCE_CODE from cache/command line
-    if(NOT QT_IOS_ITS_ENCRYPTION_EXPORT_COMPLIANCE_CODE)
+    if(QT_IOS_ITS_ENCRYPTION_EXPORT_COMPLIANCE_CODE)
         set(QT_IOS_ITS_ENCRYPTION_EXPORT_COMPLIANCE_CODE ARGIOS_ITS_ENCRYPTION_EXPORT_COMPLIANCE_CODE)
     endif()
     # QT_IOS_ITS_ENCRYPTION_KEYS is used in Info.plist.in
@@ -267,6 +270,7 @@ function(add_qt_ios_app TARGET)
         message(STATUS "HIDDEN_STATUS_BAR                   : ${QT_IOS_HIDDEN_STATUS_BAR}")
         message(STATUS "IPA                                 : ${QT_IOS_IPA}")
         message(STATUS "UPLOAD_SYMBOL                       : ${QT_IOS_UPLOAD_SYMBOL}")
+        message(STATUS "PHOTO_LIBRARY_USAGE_DES             : ${QT_IOS_PHOTO_LIBRARY_USAGE_DES}")
         message(STATUS "DISTRIBUTION_METHOD                 : ${QT_IOS_DISTRIBUTION_METHOD}")
         message(STATUS "------ QtIosCMake END Configuration ------")
     endif() # QT_IOS_VERBOSE
@@ -578,6 +582,10 @@ function(add_qt_ios_app TARGET)
             set(QT_IOS_UPLOAD_SYMBOL_KEY "<key>uploadSymbols</key><true/>")
         else()
             set(QT_IOS_UPLOAD_SYMBOL_KEY "")
+        endif()
+
+        if(QT_IOS_PHOTO_LIBRARY_USAGE_DES)
+            set(MACOSX_BUNDLE_PHOTO_LIBRARY_USAGE_DES "<key>NSPhotoLibraryUsageDescription</key> <string>${QT_IOS_PHOTO_LIBRARY_USAGE_DES}</string>" PARENT_SCOPE)
         endif()
 
         set(QT_IOS_EXPORT_OPTIONS_FILE ${CMAKE_CURRENT_BINARY_DIR}/${QT_IOS_TARGET}ExportOptions.plist)
